@@ -12,7 +12,9 @@ These patterns define the core behavior and thinking process of modern AI agents
 
 The agent first creates an outline of the task (like a to-do list) and then decides the order in which to complete each part.
 This makes the workflow structured and also help make agent organized.
+
 For example,
+
 Step 1: Understand the user’s question
 
 Step 2: Search for relevant data
@@ -25,6 +27,7 @@ Step 3: Summarize and answer
 
 They let the agent take actions like searching the web, calling APIs, calculating values, or reading files.
 The key is deciding when and which tool to use.
+
 Example tools:
 
 search_tool() – for web lookup
@@ -40,6 +43,7 @@ api_tool() – for connecting with external systems
 
 Reflection is a process in which the agent reviews its previous answer, identifies mistakes or weak reasoning, and then improves the response.
 This step helps the model self-correct and generate better answers over time.
+
 For example, after giving an output, the agent might ask itself:
 
 “Was my answer accurate and complete?”
@@ -51,9 +55,29 @@ If not, it revises the reasoning and tries again.
 
 4-Multi-Agent Collaboration (where multiple agents interact to achieve a specific goal)
 
+Each agent handles its specific domain (e.g., one for planning, one for writing, one for checking).
+They communicate through a shared state or messages, allowing distributed problem-solving.
+Example:
+
+Planner Agent → divides the task
+
+Research Agent → gathers info
+
+Writer Agent → generates the report
+
+
 
 
 Implement a simple ReAct Agent using llm and Python (Thought → Action → Observation → Thought → … → Final Answer)
+
+Classifies incoming messages (respond, ignore, notify)
+Drafts responses
+Schedules meetings
+
+<img width="1066" height="351" alt="image" src="https://github.com/user-attachments/assets/a89dc0cf-07cb-4b62-8ecb-b9468d1eec74" />
+
+
+
 
 Tmplement same agent using LangGraph
 
