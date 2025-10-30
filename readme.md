@@ -8,6 +8,7 @@ Design Patterns to develop Agentic AI Workflows
 These patterns define the core behavior and thinking process of modern AI agents. Each design pattern represents approach to make the agents more autonomous and intelligent.
 
 
+
 1-Planning (how to complete a task step by step -from outline to what to do after that)
 
 The agent first creates an outline of the task (like a to-do list) and then decides the order in which to complete each part.
@@ -20,6 +21,7 @@ Step 1: Understand the user’s question
 Step 2: Search for relevant data
 
 Step 3: Summarize and answer
+
 
 
 
@@ -38,6 +40,7 @@ api_tool() – for connecting with external systems
 
 
 
+
 3-Reflection (thinking about own response and try to improve it)
 
 
@@ -49,6 +52,7 @@ For example, after giving an output, the agent might ask itself:
 “Was my answer accurate and complete?”
 
 If not, it revises the reasoning and tries again.
+
 
 
 
@@ -68,11 +72,43 @@ Writer Agent → generates the report
 
 
 
+
 Implement a simple ReAct Agent using llm and Python (Thought → Action → Observation → Thought → … → Final Answer)
 
 Classifies incoming messages (respond, ignore, notify)
+
+
+classification: Literal["ignore", "respond", "notify"] = Field(
+        description="The classification of an email: 'ignore' for irrelevant emails, "
+        "'notify' for important information that doesn't need a response, "
+        "'respond' for emails that need a reply",
+    )
+
+
 Drafts responses
+
+
+@tool
+def write_email(to: str, subject: str, content: str) -> str:
+    """Write and send an email."""
+    # Placeholder response - in real app would send email
+    return f"Email sent to {to} with subject '{subject}'"
+
+    
 Schedules meetings
+
+
+@tool
+def schedule_meeting(
+    attendees: list[str], 
+    subject: str, 
+    duration_minutes: int, 
+    preferred_day: str
+) -> str:
+    """Schedule a calendar meeting."""
+    # Placeholder response - in real app would check calendar and schedule
+    return f"Meeting '{subject}' scheduled for {preferred_day} with {len(attendees)} attendees"
+
 
 <img width="1066" height="351" alt="image" src="https://github.com/user-attachments/assets/a89dc0cf-07cb-4b62-8ecb-b9468d1eec74" />
 
@@ -80,6 +116,30 @@ Schedules meetings
 
 
 Tmplement same agent using LangGraph
+
+
+The ReAct (Reasoning + Acting) pattern combines logical thinking with action-taking.
+An agent reasons about what to do next “Thought”, takes an action “Action”, observes the result (“Observation”), and continues this loop until it reaches the final answer.
+
+Example Workflow:
+
+
+Thought: I need to know the current weather.
+
+
+Action: Use weather_api tool.
+
+
+Observation: It’s 25°C and sunny.
+
+
+Thought: Now I can tell the user it’s a nice day.
+
+
+Final Answer: “It’s sunny and 25°C today.”
+
+
+
 
 Components of a LangGraph
 1-Prompt Tempelates
