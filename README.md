@@ -1,7 +1,9 @@
 # Courses-Important-Notes
 **Course (Long-Term Agentic Memory With LangGraph)**
 Objective --> why and how to add memory in ai agents
+
 why --> because it is very important to make model learn about past events, preferences,facts especially assistant agents so that they give more efficient results.
+
 how --> to add memory we must know what to store and when and what to retrieve
 to add memory we use **langmem** library to manage memory and it also supports vector database that provide searchable tools
 **How agents interact with memory** 
