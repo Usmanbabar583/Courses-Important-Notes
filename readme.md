@@ -1,14 +1,53 @@
 **Course (AI Agents in LangGraph)**
 
+
+Objective--> (How to build langchain agents using LangGraph. The goal of this course is to understand how LangGraph can be used as an extension of LangChain to design, manage, and execute agentic AI workflows)
+
 Design Patterns to develop Agentic AI Workflows
 
-Objective (How to build langchain agents using LangGraph)
+These patterns define the core behavior and thinking process of modern AI agents. Each design pattern represents approach to make the agents more autonomous and intelligent.
 
-1-Planning (how to complete a task step by step -- from outline to what to do after that)
+
+1-Planning (how to complete a task step by step -from outline to what to do after that)
+
+The agent first creates an outline of the task (like a to-do list) and then decides the order in which to complete each part.
+This makes the workflow structured and also help make agent organized.
+For example,
+Step 1: Understand the user’s question
+
+Step 2: Search for relevant data
+
+Step 3: Summarize and answer
+
+
 
 2-Tools (what tools are available and when to use e.g search tool)
 
+They let the agent take actions like searching the web, calling APIs, calculating values, or reading files.
+The key is deciding when and which tool to use.
+Example tools:
+
+search_tool() – for web lookup
+
+math_tool() – for performing calculations
+
+api_tool() – for connecting with external systems
+
+
+
 3-Reflection (thinking about own response and try to improve it)
+
+
+Reflection is a process in which the agent reviews its previous answer, identifies mistakes or weak reasoning, and then improves the response.
+This step helps the model self-correct and generate better answers over time.
+For example, after giving an output, the agent might ask itself:
+
+“Was my answer accurate and complete?”
+
+If not, it revises the reasoning and tries again.
+
+
+
 
 4-Multi-Agent Collaboration (where multiple agents interact to achieve a specific goal)
 
