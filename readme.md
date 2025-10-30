@@ -3,9 +3,11 @@
 
 Objective--> (How to build langchain agents using LangGraph. The goal of this course is to understand how LangGraph can be used as an extension of LangChain to design, manage, and execute agentic AI workflows)
 
+
 Design Patterns to develop Agentic AI Workflows
 
 These patterns define the core behavior and thinking process of modern AI agents. Each design pattern represents approach to make the agents more autonomous and intelligent.
+
 
 
 
@@ -21,6 +23,7 @@ Step 1: Understand the user’s question
 Step 2: Search for relevant data
 
 Step 3: Summarize and answer
+
 
 
 
@@ -41,6 +44,7 @@ api_tool() – for connecting with external systems
 
 
 
+
 3-Reflection (thinking about own response and try to improve it)
 
 
@@ -52,6 +56,7 @@ For example, after giving an output, the agent might ask itself:
 “Was my answer accurate and complete?”
 
 If not, it revises the reasoning and tries again.
+
 
 
 
@@ -75,47 +80,10 @@ Writer Agent → generates the report
 
 Implement a simple ReAct Agent using llm and Python (Thought → Action → Observation → Thought → … → Final Answer)
 
-Classifies incoming messages (respond, ignore, notify)
+
+<img width="246" height="177" alt="image" src="https://github.com/user-attachments/assets/7c647246-3827-40a4-94e9-b495e98005f3" />
 
 
-classification: Literal["ignore", "respond", "notify"] = Field(
-        description="The classification of an email: 'ignore' for irrelevant emails, "
-        "'notify' for important information that doesn't need a response, "
-        "'respond' for emails that need a reply",
-    )
-
-
-Drafts responses
-
-
-@tool
-def write_email(to: str, subject: str, content: str) -> str:
-    """Write and send an email."""
-    # Placeholder response - in real app would send email
-    return f"Email sent to {to} with subject '{subject}'"
-
-    
-Schedules meetings
-
-
-@tool
-def schedule_meeting(
-    attendees: list[str], 
-    subject: str, 
-    duration_minutes: int, 
-    preferred_day: str
-) -> str:
-    """Schedule a calendar meeting."""
-    # Placeholder response - in real app would check calendar and schedule
-    return f"Meeting '{subject}' scheduled for {preferred_day} with {len(attendees)} attendees"
-
-
-<img width="1066" height="351" alt="image" src="https://github.com/user-attachments/assets/a89dc0cf-07cb-4b62-8ecb-b9468d1eec74" />
-
-
-
-
-Tmplement same agent using LangGraph
 
 
 The ReAct (Reasoning + Acting) pattern combines logical thinking with action-taking.
@@ -142,35 +110,172 @@ Final Answer: “It’s sunny and 25°C today.”
 
 
 Components of a LangGraph
+
+
 1-Prompt Tempelates
+
+
+Templates define the structure and context for LLM inputs.
+
+
+
+
+Graph Structure
+
+
+<img width="541" height="355" alt="image" src="https://github.com/user-attachments/assets/e33bf556-88b6-4506-959c-0509308968cf" />
+
+
+
+
 
 2-Tools (functions to extend capability of an agent - APIS, web_search)
 
+
+Tools are external functions or APIs that enhance the agent’s power.
+They allow integration with databases, web search, or custom logic.
+LangGraph connects tools as nodes or within agent functions for flexible workflows.
+
+
+
+
 3-Nodes (functions or agents - representing a step)
+
+
+Each node in LangGraph represents a single operation — a reasoning step, a tool call, or even another agent.
+Nodes can be synchronous or asynchronous and are connected through edges.
+
+
 
 4-Edges (connections between nodes)
 
+
+Edges represent the flow of data or logic between nodes.
+They determine which node runs next after the current one finishes execution.
+
+
+
+
 5-Conditional Edges (decide what to do if condition fullfilled)
+
+Conditional edges allow branching decisions — different paths depending on outcomes.
+Example:
+If the tool’s output contains “error,” go to an error-handling node; otherwise, proceed normally.
+
+
+
 
 6-State (Representing Current Context or data - accessable to all nodes)
 
 
+State holds the agent’s current context — like conversation history, tool outputs, or variable values.
+All nodes can access and update this shared state, making it easy to pass data throughout the workflow.
+
+
+
 Implemented langGraph Components 
 
+
+class Agent:
+
+    def __init__(self, model, tools, system=""):
+        self.system = system
+        graph = StateGraph(AgentState)
+        graph.add_node("llm", self.call_openai)
+        graph.add_node("action", self.take_action)
+        graph.add_conditional_edges(
+            "llm",
+            self.exists_action,
+            {True: "action", False: END}
+        )
+        graph.add_edge("action", "llm")
+        graph.set_entry_point("llm")
+        self.graph = graph.compile()
+        self.tools = {t.name: t for t in tools}
+        self.model = model.bind_tools(tools)
+
+    def exists_action(self, state: AgentState):
+        result = state['messages'][-1]
+        return len(result.tool_calls) > 0
+
+    def call_openai(self, state: AgentState):
+        messages = state['messages']
+        if self.system:
+            messages = [SystemMessage(content=self.system)] + messages
+        message = self.model.invoke(messages)
+        return {'messages': [message]}
+
+    def take_action(self, state: AgentState):
+        tool_calls = state['messages'][-1].tool_calls
+        results = []
+        for t in tool_calls:
+            print(f"Calling: {t}")
+            if not t['name'] in self.tools:      # check for bad tool name from LLM
+                print("\n ....bad tool name....")
+                result = "bad tool name, retry"  # instruct LLM to retry if bad
+            else:
+                result = self.tools[t['name']].invoke(t['args'])
+            results.append(ToolMessage(tool_call_id=t['id'], name=t['name'], content=str(result)))
+        print("Back to the model!")
+        return {'messages': results}
+
+
+
+
+
 Q:Persistance
-ability to save and maintain state over time. Go back and resume in particular state in langGraph and to implement in LangGraph we use check-pointer
+ability to save and maintain state over time. Go back and resume in particular state in langGraph and to implement in LangGraph we use check-pointer.
+In LangGraph, persistence ensures that the workflow’s state can be saved, paused, and resumed later. 
+It is especially useful for long-running tasks or human-in-the-loop workflows. 
+The checkpointer acts like a memory snapshot — storing the current graph state so it can continue later from the same point.
+
+
 
 Q:Streaming
 
-ability to provide real-time updates while the graph is executing, rather than only providing a final result at the end
+ability to provide real-time updates while the graph is executing, rather than only providing a final result at the end. Streaming allows the agent to send partial or live updates as it works.
+Instead of waiting for the entire response, the system streams intermediate outputs (like token-by-token text or step-by-step progress).
+This improves user experience, especially in chat interfaces where you can see the model’s output appearing in real-time.
+
+
 
 Q:Async Methods
 
-While one task waits e.g, for an API response , another task can keep running.
+While one task waits e.g, for an API response , another task can keep running. Asynchronous methods (async/await in Python) let LangGraph run multiple operations concurrently.
+This is crucial when agents call APIs, run long processes, or handle multiple nodes simultaneously.
+It prevents blocking and ensures faster, smoother performance.
+
+
 
 LangChain Online Resources
+
+
+LangChain provides comprehensive documentation, tutorials, and guides for learning LangGraph, ReAct agents, and multi-agent coordination.
+
+
+
 
 Q:Multi-agent System vs Supervisor
 
 In multi-agent several agents work together to achieve a goal while in supervisor we a powerful agent that supervises other agents
+
+
+
+In multi-agent several agents work together to achieve a goal while in supervisor we a powerful agent that supervises other agents
+
+In a Multi-Agent System, each agent operates autonomously with its own role and logic. They collaborate and exchange results to complete a task collectively.
+Example: One agent collects data, another analyzes it, and a third summarizes findings.
+
+In a Supervisor System, one central (supervisor) agent manages and controls other agents. It decides which agent should act next, monitors their outputs, and ensures the overall workflow stays consistent.
+Example: The supervisor reviews the task and instructs either the “DataAgent” or “WriterAgent” depending on the stage.
+
+
+<img width="912" height="538" alt="image" src="https://github.com/user-attachments/assets/e44edfc0-6606-43b4-be1f-3afe0e96710f" />
+
+
+
+
+
+
+<img width="735" height="533" alt="image" src="https://github.com/user-attachments/assets/295bbad4-7f47-47f5-800c-f01bf160928b" />
 
