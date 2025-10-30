@@ -34,3 +34,5 @@ Components of a LangGraph
 4-Edges (connections between nodes)
 5-Conditional Edges (decide what to do if condition fullfilled)
 6-State (Representing Current Context or data - accessable to all nodes)
+
+Implemented langGraph Components 
