@@ -144,3 +144,61 @@ Third Implementation (Procedural Memory)
 The agent is given prompts or instructions on which tools to pick and when during execution.
 
 This allows the assistant to make better decisions on its own while performing tasks (e.g., deciding whether to use the “email search” tool or “compose email” tool).
+
+
+
+
+
+Add Memory to Agent
+
+
+Steps 
+
+
+
+1--> Create a Memory Store (creating a storage system to hold the agent’s memories. InMemoryStore is like a temporary database in your computer’s memory (RAM) )
+
+
+store = InMemoryStore(
+    index={"embed": "openai:text-embedding-3-small"}
+)
+
+
+
+Like a book
+
+
+
+
+2--> Create a Manage Memory Tool (this creates a tool that the agent can use to save new information into memory)
+
+
+
+from langmem import create_manage_memory_tool, create_search_memory_tool
+manage_memory_tool = create_manage_memory_tool(
+    namespace=(
+        "email_assistant", 
+        "{langgraph_user_id}",
+        "collection"
+    )
+
+
+Like a pen to write on the book
+
+
+3--> Create a Memory Search Tool (this creates a search tool to extract information when needed)
+
+
+
+search_memory_tool = create_search_memory_tool(
+    namespace=(
+        "email_assistant",
+        "{langgraph_user_id}",
+        "collection"
+    )
+)
+
+
+
+This is just like eyes searching 
+
