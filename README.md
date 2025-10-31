@@ -46,6 +46,19 @@ Example: After finishing a chat, the system reviews the dialogue, extracts key f
 
 Benefit: Reduces processing load during active interactions and allows post-analysis or filtering of what should be remembered.
 
+
+
+
+
+
+
+<img width="1110" height="232" alt="image" src="https://github.com/user-attachments/assets/683035a3-4f38-4139-9aed-0fbce1c259ab" />
+
+
+
+
+
+
 Types of Memory
 
 Semantic Memory
@@ -88,6 +101,20 @@ Example: Remembering how to send an email or which tools to use for sentiment an
 
 
 Implemented Email Assistant
+
+
+
+
+
+
+
+<img width="572" height="255" alt="image" src="https://github.com/user-attachments/assets/77801909-cb04-4dfe-83ee-6885547b5440" />
+
+
+
+
+
+
 
 First Implementation (Semantic Memory)
 
